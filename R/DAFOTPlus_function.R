@@ -1,0 +1,210 @@
+#' @title Phylogenetic Independence Test with Rank Correlation (IndDAFOT)
+#'
+#' @description A phylogenetic independence test directly measures the association between the outcome of interest and the total microbial abundance in each lineage (subtree) by a rank correlation.
+#'
+#' @details This method is designed to capture possible nonlinear associations between the outcome of interest and microbial abundance. It aggeregates the rank correlations for different lineages in two ways: the weighted sum and maximum.
+#'
+#' @importFrom independence hoeffding.D.test
+#' @importFrom independence tau.star.test
+#' @importFrom independence hoeffding.refined.test
+#' @importFrom tidytree rootnode
+#' @importFrom ggtree
+#'
+#' @param P A numeric matrix or data frame. Compositional data. Row represents nodes on the phylogenetic tree. Column represents samples.
+#' @param Y A vector. The interested variable.
+#' @param tree \code{\phylo} class. Phylogenetic tree.
+#' @param method Dn or Rn or Tn. Dn is the Hoeffding's D test; Rn is the Blum-Kiefer-Rosenblatt's R; Tn is the Bergsma-Dassios-Yanaginoto's tau test.
+#' @param step Permutation times.
+
+#'
+#' return a \code{list} with components:
+#'\itemize{
+#'\item{ \code{Stat}, a vector with length 2. The first result is the correlation coefficient using the weighted sum approach; the second result is the correlation coefficient using maximum approach.}
+#'\item{ \code{P}, a vector with length 2. The first result is the obtained p-value using the weighted sum approache; the second result is the obtained p-value using maximum approach.}
+#'}
+library(ggtree)
+IndDAFOT = function(P,Y,tree,method = 'Dn',step = 200){
+    # Correlation between one single edge and Y
+    tree.corr = function(EdgeP,Y,method,weight=F){
+      n = ncol(EdgeP)
+      if(method == 'Dn'){
+        phi = apply(EdgeP,1,function(P)independence::hoeffding.D.test(P,Y,precision = 1,collisions = F)$Dn)
+      }else if(method == 'Tn'){
+        phi = apply(EdgeP,1,function(P)independence::tau.star.test(P,Y,precision = 1,collisions = F)$Tn)
+      }else if(method == 'Rn'){
+        phi = apply(EdgeP,1,function(P)independence::hoeffding.refined.test(P,Y,precision = 1,collisions = F)$Rn)
+      }else{
+        stop("Please choose valid method.")
+      }
+      return(c(sum(weight*phi),max(phi)))
+    }
+    EdgeP = AccuProbMt(P,tree)
+    EdgeL = EdgeLExtract(tree)
+    EdgeP = EdgeP[EdgeL > 0,]
+    EdgeL = EdgeL[EdgeL > 0]
+
+    n = ncol(EdgeP)
+    t = tree.corr(EdgeP,Y,method,weight=EdgeL)
+    sample_matrix = replicate(step,sample(1:n,replace = F))
+    Y1 = matrix(Y[sample_matrix],nrow = n)
+    Phi = t(apply(Y1,2,function(Y)tree.corr(EdgeP,Y,method,weight=EdgeL)))
+    Pvalue =  c(mean(c(Phi[,1],t[1])>=t[1]),mean(c(Phi[,2],t[2])>=t[2]))
+    return(list(Stat = t, P = Pvalue))
+}
+
+
+# Convert node abundance to edge abundance
+AccuProbMt <- function(P,Tree)
+{
+  TTedge=Tree$edge
+  m=length(Tree$tip.label)+Tree$Nnode
+  Nodenum=1:m
+  ND=NodeDepth(Tree)
+  maxDepth=max(ND)
+  for (k in 2:maxDepth)
+  {
+    Tnode=Nodenum[ND==(maxDepth-k+2)]
+    Index=(TTedge[,2] %in% Tnode)
+    Tedge=TTedge[Index,,drop=FALSE]
+    for(i in 1:sum(Index))
+    {
+      P[Tedge[i,1],]=P[Tedge[i,1],]+P[Tedge[i,2],]
+    }
+  }
+  return(P)
+}
+
+# Return the depth of each node on the tree.
+NodeDepth <- function(Tree)
+{
+  m=length(Tree$tip.label)+Tree$Nnode
+  Nodenum=1:m
+  Troot=tidytree::rootnode(Tree)
+  NodeDepth=rep(0,m)
+  NodeDepth[Troot]=1
+  Depth=1
+  TTedge=Tree$edge
+  while (sum(NodeDepth<=0)>0)
+  {
+    Tnode=Nodenum[NodeDepth==Depth]
+    Index=(TTedge[,1] %in% Tnode)
+    if (sum(Index)>0) {
+      Tedge=TTedge[Index,,drop=FALSE]
+      Depth=Depth+1
+      NodeDepth[Tedge[,2]]=Depth
+    }
+  }
+  return(NodeDepth)
+}
+
+# Extract edge weights from the phylogenetic tree.
+EdgeLExtract <- function(Tree)
+{
+  Trank=sort(Tree$edge[,2],index.return =TRUE)
+  EdgeL=Tree$edge.length[Trank$ix]
+  rootnum=tidytree::rootnode(Tree)
+  if (rootnum>length(EdgeL))
+  {
+    EdgeL=c(EdgeL,0)
+  } else {
+    EdgeL=c(EdgeL[1:(rootnum-1)],0,EdgeL[rootnum:length(EdgeL)])
+  }
+  return(EdgeL)
+}
+
+
+
+#' @title Phylogenetic Conditional Independence Test with Rank Correlation (ConIndDAFOT)
+#'
+#' @description A phylogenetic independence test directly measures the association between the outcome of interest and the total microbial abundance with adjustment of confounding effects.
+#'
+#' @details This method is designed to control confounding effect in the basis of IndDAFOT. Similar to the idea of the nearest neighbor mehtod, we consider the nearest neighbor conditional rank correlation coefficient for each lineage. And conditional rank correlations for lineage are aggregated as the weighted sum and maximum to capture signals.
+#'
+#' @importFrom stats dist
+#' @importFrom independence tau.star.test
+#' @importFrom independence hoeffding.refined.test
+#' @importFrom tidytree rootnode
+#' @importFrom ggtree
+#' @importFrom RANN nn2
+#'
+#' @param P A numeric matrix or data frame. Compositional data. Row represents nodes on the phylogenetic tree. Column represents samples.
+#' @param Y A vector. The interested variable.
+#' @param X The confounding variables. Row represents samples. Each column corresponds to each confounding variable.
+#' @param neighbor
+#' @param tree \code{\phylo} class. Phylogenetic tree.
+#' @param condgen \code{\function}. Conditional distribution generating function.
+#' @param ExY Extra data generated from the conditional distribution of Y given X.
+#' @param ExX Extra data generated from the distribution of X.
+#' @param Exk the number of neighbors to draw Y from the neighbors of X.
+#' @param method Dn or Rn or Tn. Dn is the Hoeffding's D test; Rn is the Blum-Kiefer-Rosenblatt's R; Tn is the Bergsma-Dassios-Yanaginoto's tau test.
+#' @param neighbor the number of neighbors to estimate local rank correlation.
+#' @param step Permutation times.
+
+#'
+#' return a \code{list} with components:
+#' \itemize{
+#' \item{ \code{Stat}, a vector with length 2. The first result is the correlation coefficient using the weighted sum approach; the second result is the correlation coefficient using maximum approach.}
+#' \item{ \code{P}, a vector with length 2. The first result is the obtained p-value using the weighted sum approache; the second result isthe obtained p-value using maximum approach.}
+#' }
+
+
+## Phylogenetic conditional independence test
+
+
+
+ConIndDAFOT = function(P, Y, X, Tree, condgen = NULL, ExY = NULL, ExX = NULL, Exk = min(10,length(ExY)), method = 'Dn',neighbor = min(10,length(Y)), step = 200){
+    tree.corr.cond = function(EdgeP,Y,X,method,neighbor = min(10,length(Y)), weight=F){
+        n = ncol(EdgeP)
+        d = nrow(EdgeP)
+        distm = as.matrix(stats::dist(X))
+        phi = rep(0,d)
+        i.list = apply(distm, 2, function(X)order(X,decreasing = F)[1:neighbor])
+        Y1 = matrix(Y[i.list],nrow = nrow(i.list))
+        if(method == 'Dn'){
+        phi = rowSums(apply(i.list, 2, function(x)apply(EdgeP[,x],1,function(P)independence::hoeffding.D.test(P,Y[x],precision = 1,collisions = F)$Dn)))
+        }else if(method == 'Tn'){
+        phi = rowSums(apply(i.list, 2, function(x)apply(EdgeP[,x],1,function(P)independence::tau.star.test(P,Y[x],precision = 1,collisions = F)$Tn)))
+
+        }else if(method == 'Rn'){
+        phi = rowSums(apply(i.list, 2, function(x)apply(EdgeP[,x],1,function(P)independence::hoeffding.refined.test(P,Y[x],precision = 1,collisions = F)$Rn)))
+        }else{
+        stop("Please choose valid method.")
+        }
+        phi = phi/n
+        return(c(sum(weight*phi),max(phi)))
+    }
+      EdgeP = AccuProbMt(P,Tree)
+      EdgeL = EdgeLExtract(Tree)
+      EdgeP = EdgeP[EdgeL>0,]
+      EdgeL = EdgeL[EdgeL>0]
+      
+      n = ncol(EdgeP)
+      t = tree.corr.cond(EdgeP,Y,X,method,weight=EdgeL,neighbor = neighbor)
+
+      Phi = matrix(0, nrow = step, ncol = 2)
+      if(!is.null(condgen)){
+          for(i in 1:step){
+              NewY = sapply(1:nrow(X), function(i,X){condgen(X[i,])},X)
+              Phi[i,] = tree.corr.cond(EdgeP,NewY,X,method,weight=EdgeL,neighbor = neighbor)
+              }
+      }else if (!is.null(ExY)&!is.null(ExX)){
+          ExNN = RANN::nn2(ExX, X, k = Exk)$nn.idx
+          for(i in 1:step){
+              NewIndex = apply(ExNN, 1, sample, 1)
+              NewY = ExY[NewIndex]
+              Phi[i,] = tree.corr.cond(EdgeP,NewY,X,method,weight=EdgeL,neighbor = neighbor)
+              }
+          }else{
+            distm = as.matrix(stats::dist(X))
+            NewIndex = apply(distm,2,function(X)order(X,decreasing = F)[1:Exk])
+            for(i in 1:step){
+                NewIndex = apply(NewIndex,2,function(x)sample(x,1))
+                NewY = Y[NewIndex]
+                Phi[i,] = tree.corr.cond(EdgeP,NewY,X,method,weight=EdgeL,neighbor = neighbor)
+         }
+        }
+         PValue = c(mean(c(Phi[,1],t[1])>=t[1]), mean(c(Phi[,2],t[2])>=t[2]))
+      return(list(Stat = t, P = PValue))
+}
+
+
