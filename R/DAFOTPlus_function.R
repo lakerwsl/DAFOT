@@ -8,21 +8,30 @@
 #' @importFrom independence tau.star.test
 #' @importFrom independence hoeffding.refined.test
 #' @importFrom tidytree rootnode
-#' @importFrom ggtree
+#' @importFrom ggtree ggtree
+#' @importFrom ape rtree
 #'
 #' @param P A numeric matrix or data frame. Compositional data. Row represents nodes on the phylogenetic tree. Column represents samples.
 #' @param Y A vector. The interested variable.
 #' @param tree \code{\phylo} class. Phylogenetic tree.
 #' @param method Dn or Rn or Tn. Dn is the Hoeffding's D test; Rn is the Blum-Kiefer-Rosenblatt's R; Tn is the Bergsma-Dassios-Yanaginoto's tau test.
 #' @param step Permutation times.
-
 #'
-#' return a \code{list} with components:
-#'\itemize{
-#'\item{ \code{Stat}, a vector with length 2. The first result is the correlation coefficient using the weighted sum approach; the second result is the correlation coefficient using maximum approach.}
-#'\item{ \code{P}, a vector with length 2. The first result is the obtained p-value using the weighted sum approache; the second result is the obtained p-value using maximum approach.}
-#'}
-library(ggtree)
+#' @return a \code{list} with components:
+#' \itemize{
+#' \item{ \code{Stat}, a vector with length 2. The first result is the correlation coefficient using the weighted sum approach; the second result is the correlation coefficient using maximum approach.}
+#' \item{ \code{P}, a vector with length 2. The first result is the obtained p-value using the weighted sum approache; the second result is the obtained p-value using maximum approach.}
+#' }
+#'
+#' @export
+#'
+#' @examples
+#' library(ape)
+#' Tree=rtree(100)
+#' P = rbind(matrix(1,nrow=length(Tree$tip.label), ncol = 100),matrix(0,nrow = Tree$Nnode, ncol = 100))
+#' Y = c(rep(1,50),rep(2,50))
+#' IndDAFOT(P,Y,Tree)
+
 IndDAFOT = function(P,Y,tree,method = 'Dn',step = 200){
     # Correlation between one single edge and Y
     tree.corr = function(EdgeP,Y,method,weight=F){
@@ -124,13 +133,13 @@ EdgeLExtract <- function(Tree)
 #' @importFrom independence tau.star.test
 #' @importFrom independence hoeffding.refined.test
 #' @importFrom tidytree rootnode
-#' @importFrom ggtree
+#' @importFrom ggtree ggtree
 #' @importFrom RANN nn2
+#' @importFrom ape rtree
 #'
 #' @param P A numeric matrix or data frame. Compositional data. Row represents nodes on the phylogenetic tree. Column represents samples.
 #' @param Y A vector. The interested variable.
 #' @param X The confounding variables. Row represents samples. Each column corresponds to each confounding variable.
-#' @param neighbor
 #' @param tree \code{\phylo} class. Phylogenetic tree.
 #' @param condgen \code{\function}. Conditional distribution generating function.
 #' @param ExY Extra data generated from the conditional distribution of Y given X.
@@ -141,16 +150,21 @@ EdgeLExtract <- function(Tree)
 #' @param step Permutation times.
 
 #'
-#' return a \code{list} with components:
+#' @return a \code{list} with components:
 #' \itemize{
 #' \item{ \code{Stat}, a vector with length 2. The first result is the correlation coefficient using the weighted sum approach; the second result is the correlation coefficient using maximum approach.}
 #' \item{ \code{P}, a vector with length 2. The first result is the obtained p-value using the weighted sum approache; the second result isthe obtained p-value using maximum approach.}
 #' }
-
-
-## Phylogenetic conditional independence test
-
-
+#'
+#' @export
+#'
+#' @examples
+#' library(ape)
+#' Tree=rtree(100)
+#' P = rbind(matrix(1,nrow=length(Tree$tip.label), ncol = 100),matrix(0,nrow = Tree$Nnode, ncol = 100))
+#' Y = c(rep(1,50),rep(2,50))
+#' X = matrix(rnorm(500),nrow=100)
+#' ConIndDAFOT(P,Y,X,Tree)
 
 ConIndDAFOT = function(P, Y, X, Tree, condgen = NULL, ExY = NULL, ExX = NULL, Exk = min(10,length(ExY)), method = 'Dn',neighbor = min(10,length(Y)), step = 200){
     tree.corr.cond = function(EdgeP,Y,X,method,neighbor = min(10,length(Y)), weight=F){
@@ -196,10 +210,10 @@ ConIndDAFOT = function(P, Y, X, Tree, condgen = NULL, ExY = NULL, ExX = NULL, Ex
               }
           }else{
             distm = as.matrix(stats::dist(X))
-            NewIndex = apply(distm,2,function(X)order(X,decreasing = F)[1:Exk])
+            NewIndex = sapply(1:ncol(distm),function(X)order(distm[,X],decreasing = F)[1:neighbor])
             for(i in 1:step){
-                NewIndex = apply(NewIndex,2,function(x)sample(x,1))
-                NewY = Y[NewIndex]
+                Ind = apply(NewIndex,2,function(x)sample(x,1))
+                NewY = Y[Ind]
                 Phi[i,] = tree.corr.cond(EdgeP,NewY,X,method,weight=EdgeL,neighbor = neighbor)
          }
         }
