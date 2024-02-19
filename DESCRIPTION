@@ -8,6 +8,7 @@ Description: Quantitative comparison of microbial composition from different pop
     Wang, S., Cai, T.T., Li, H. (2020) <http://www-stat.wharton.upenn.edu/~tcai/paper/Testing-Phylogenetic-Composition.pdf>.
 Imports: tidytree, stats, methods, gtools, tibble, ape, independence, tidytree, ggtree, stats, RANN
 biocViews: 
+Remotes: chaim-e/independence
 License: MIT+file LICENSE
 Encoding: UTF-8
 LazyData: true
