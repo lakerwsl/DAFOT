@@ -13,7 +13,7 @@
 #'
 #' @param P A numeric matrix or data frame. Compositional data. Row represents nodes on the phylogenetic tree. Column represents samples.
 #' @param Y A vector. The interested variable.
-#' @param tree \code{\phylo} class. Phylogenetic tree.
+#' @param tree \code{phylo} class. Phylogenetic tree.
 #' @param method Dn or Rn or Tn. Dn is the Hoeffding's D test; Rn is the Blum-Kiefer-Rosenblatt's R; Tn is the Bergsma-Dassios-Yanaginoto's tau test.
 #' @param step Permutation times.
 #'
@@ -140,8 +140,8 @@ EdgeLExtract <- function(Tree)
 #' @param P A numeric matrix or data frame. Compositional data. Row represents nodes on the phylogenetic tree. Column represents samples.
 #' @param Y A vector. The interested variable.
 #' @param X The confounding variables. Row represents samples. Each column corresponds to each confounding variable.
-#' @param tree \code{\phylo} class. Phylogenetic tree.
-#' @param condgen \code{\function}. Conditional distribution generating function.
+#' @param Tree \code{phylo} class. Phylogenetic tree.
+#' @param condgen \code{function}. Conditional distribution generating function.
 #' @param ExY Extra data generated from the conditional distribution of Y given X.
 #' @param ExX Extra data generated from the distribution of X.
 #' @param Exk the number of neighbors to draw Y from the neighbors of X.
