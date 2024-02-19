@@ -34,78 +34,72 @@
 #'
 #' @examples
 #' library(ape)
-#' Tree=rtree(100)
-#' alphaP=c(rep(1,length(Tree$tip.label)),rep(0,Tree$Nnode))
-#' alphaQ=c(rep(1,length(Tree$tip.label)),rep(0,Tree$Nnode))
-#' DataPQ<-DataGenerating(100,100,alphaP,alphaQ,1000)
-#' DAFOT(DataPQ$P,DataPQ$Q,Tree,100,0.05)
-#'
+#' Tree <- rtree(100)
+#' alphaP <- c(rep(1, length(Tree$tip.label)), rep(0, Tree$Nnode))
+#' alphaQ <- c(rep(1, length(Tree$tip.label)), rep(0, Tree$Nnode))
+#' DataPQ <- DataGenerating(100, 100, alphaP, alphaQ, 1000)
+#' DAFOT(DataPQ$P, DataPQ$Q, Tree, 100, 0.05)
 #'
 #' @author Shulei Wang
-DAFOT <- function(P,Q,Tree,times,alpha)
-{
-  AccuProbMt <- function(rP,Tree)
-  {
-    TTedge=Tree$edge
-    m=length(Tree$tip.label)+Tree$Nnode
-    Nodenum=1:m
-    TTedge=Tree$edge
-    P=rP
+DAFOT <- function(P, Q, Tree, times, alpha) {
+  AccuProbMt <- function(rP, Tree) {
+    TTedge <- Tree$edge
+    m <- length(Tree$tip.label) + Tree$Nnode
+    Nodenum <- 1:m
+    TTedge <- Tree$edge
+    P <- rP
 
-    ND=NodeDepth(Tree)
+    ND <- NodeDepth(Tree)
 
-    maxDepth=max(ND)
+    maxDepth <- max(ND)
     for (k in 2:maxDepth)
     {
-      Tnode=Nodenum[ND==(maxDepth-k+2)]
-      Index=(TTedge[,2] %in% Tnode)
-      Tedge=matrix(TTedge[Index,],ncol=2)
-      for( i in 1:sum(Index))
+      Tnode <- Nodenum[ND == (maxDepth - k + 2)]
+      Index <- (TTedge[, 2] %in% Tnode)
+      Tedge <- matrix(TTedge[Index, ], ncol = 2)
+      for (i in 1:sum(Index))
       {
-        P[Tedge[i,1],]=P[Tedge[i,1],]+P[Tedge[i,2],]
+        P[Tedge[i, 1], ] <- P[Tedge[i, 1], ] + P[Tedge[i, 2], ]
       }
     }
     return(P)
   }
 
-  NodeDepth <- function(Tree)
-  {
-    m=length(Tree$tip.label)+Tree$Nnode
-    Nodenum=1:m
+  NodeDepth <- function(Tree) {
+    m <- length(Tree$tip.label) + Tree$Nnode
+    Nodenum <- 1:m
 
-    Troot=tidytree::rootnode(as_tibble(Tree))
-    Troot=Troot$node
-    NodeDepth=rep(0,m)
-    NodeDepth[Troot]=1
-    Depth=1
-    TTedge=Tree$edge
-    while (sum(NodeDepth<=0)>0)
-    {
-      Tnode=Nodenum[NodeDepth==Depth]
-      Index=(TTedge[,1] %in% Tnode)
-      Tedge=matrix(TTedge[Index,],ncol=2)
-      Depth=Depth+1
-      for( i in 1:sum(Index))
+    Troot <- tidytree::rootnode(as_tibble(Tree))
+    Troot <- Troot$node
+    NodeDepth <- rep(0, m)
+    NodeDepth[Troot] <- 1
+    Depth <- 1
+    TTedge <- Tree$edge
+    while (sum(NodeDepth <= 0) > 0) {
+      Tnode <- Nodenum[NodeDepth == Depth]
+      Index <- (TTedge[, 1] %in% Tnode)
+      Tedge <- matrix(TTedge[Index, ], ncol = 2)
+      Depth <- Depth + 1
+      for (i in 1:sum(Index))
       {
-        NodeDepth[Tedge[i,2]]=Depth
+        NodeDepth[Tedge[i, 2]] <- Depth
       }
     }
     return(NodeDepth)
   }
 
-  standEdge <- function(EdgeP,EdgeQ,nP,nQ)
-  {
-    meanP=apply(EdgeP,1,mean)
-    sdP=apply(EdgeP,1,stats::sd)
-    meanQ=apply(EdgeQ,1,mean)
-    sdQ=apply(EdgeQ,1,stats::sd)
-    Diffmean=meanP-meanQ
-    Diffsd=sqrt(sdP^2/nP+sdQ^2/nQ)
+  standEdge <- function(EdgeP, EdgeQ, nP, nQ) {
+    meanP <- apply(EdgeP, 1, mean)
+    sdP <- apply(EdgeP, 1, stats::sd)
+    meanQ <- apply(EdgeQ, 1, mean)
+    sdQ <- apply(EdgeQ, 1, stats::sd)
+    Diffmean <- meanP - meanQ
+    Diffsd <- sqrt(sdP^2 / nP + sdQ^2 / nQ)
 
-    Diffstat=Diffmean
-    Diffstat[Diffsd>0]=Diffmean[Diffsd>0]/Diffsd[Diffsd>0]
-    Diffstat[Diffsd<=0]=0
-    Diffstat=abs(Diffstat)
+    Diffstat <- Diffmean
+    Diffstat[Diffsd > 0] <- Diffmean[Diffsd > 0] / Diffsd[Diffsd > 0]
+    Diffstat[Diffsd <= 0] <- 0
+    Diffstat <- abs(Diffstat)
 
     return(Diffstat)
   }
@@ -113,46 +107,46 @@ DAFOT <- function(P,Q,Tree,times,alpha)
   stopifnot(is.matrix(P))
   stopifnot(is.matrix(Q))
   stopifnot(is(Tree, "phylo"))
-  times=as.integer(times)
+  times <- as.integer(times)
   stopifnot(is.numeric(alpha))
-  stopifnot(alpha<1&&alpha>0)
-  stopifnot(nrow(P)==nrow(Q))
-  stopifnot(nrow(P)==length(Tree$tip.label)+Tree$Nnode)
-  stopifnot(all(apply(P,2,sum)==1))
-  stopifnot(all(apply(Q,2,sum)==1))
-  stopifnot(all(P>=0))
-  stopifnot(all(Q>=0))
+  stopifnot(alpha < 1 && alpha > 0)
+  stopifnot(nrow(P) == nrow(Q))
+  stopifnot(nrow(P) == length(Tree$tip.label) + Tree$Nnode)
+  stopifnot(all(apply(P, 2, sum) == 1))
+  stopifnot(all(apply(Q, 2, sum) == 1))
+  stopifnot(all(P >= 0))
+  stopifnot(all(Q >= 0))
 
-  EdgeP<-AccuProbMt(P,Tree)
-  EdgeQ<-AccuProbMt(Q,Tree)
-  nP=ncol(EdgeP)
-  nQ=ncol(EdgeQ)
+  EdgeP <- AccuProbMt(P, Tree)
+  EdgeQ <- AccuProbMt(Q, Tree)
+  nP <- ncol(EdgeP)
+  nQ <- ncol(EdgeQ)
 
-  Diffstat<-standEdge(EdgeP,EdgeQ,nP,nQ)
-  Stat<-max(Diffstat)
+  Diffstat <- standEdge(EdgeP, EdgeQ, nP, nQ)
+  Stat <- max(Diffstat)
 
-  EdgePQ=cbind(EdgeP,EdgeQ)
-  SimulatedRe<-rep(0,times)
+  EdgePQ <- cbind(EdgeP, EdgeQ)
+  SimulatedRe <- rep(0, times)
   for (i in 1:times)
   {
-    sampleQ=1:(nP+nQ)
-    sampleP=sample(sampleQ,nP)
-    sampleQ=sampleQ[!(sampleQ %in% sampleP)]
-    sampleEdgeP=EdgePQ[,sampleP]
-    sampleEdgeQ=EdgePQ[,sampleQ]
+    sampleQ <- 1:(nP + nQ)
+    sampleP <- sample(sampleQ, nP)
+    sampleQ <- sampleQ[!(sampleQ %in% sampleP)]
+    sampleEdgeP <- EdgePQ[, sampleP]
+    sampleEdgeQ <- EdgePQ[, sampleQ]
 
-    sDiffstat<-standEdge(sampleEdgeP,sampleEdgeQ,nP,nQ)
-    SimulatedRe[i]<-max(sDiffstat)
+    sDiffstat <- standEdge(sampleEdgeP, sampleEdgeQ, nP, nQ)
+    SimulatedRe[i] <- max(sDiffstat)
   }
-  PValue=(1+sum(SimulatedRe>Stat))/(1+times)
-  StatThre <- stats::quantile(SimulatedRe,1-alpha)
+  PValue <- (1 + sum(SimulatedRe > Stat)) / (1 + times)
+  StatThre <- stats::quantile(SimulatedRe, 1 - alpha)
 
-  Nodes=1:length(Diffstat)
-  Nodes=Nodes[Diffstat>StatThre]
-  Edges=Tree$edge
-  ActiveEdge=Edges[Edges[,2] %in% Nodes,]
-  Re<-list(Stat=Stat,P=PValue,Thre=StatThre,Active=ActiveEdge)
-  class(Re)<-"dafot"
+  Nodes <- 1:length(Diffstat)
+  Nodes <- Nodes[Diffstat > StatThre]
+  Edges <- Tree$edge
+  ActiveEdge <- Edges[Edges[, 2] %in% Nodes, ]
+  Re <- list(Stat = Stat, P = PValue, Thre = StatThre, Active = ActiveEdge)
+  class(Re) <- "dafot"
 
   return(Re)
 }
@@ -185,62 +179,57 @@ DAFOT <- function(P,Q,Tree,times,alpha)
 #'
 #' @examples
 #' library(ape)
-#' Tree=rtree(100)
-#' alphaP=c(rep(1,length(Tree$tip.label)),rep(0,Tree$Nnode))
-#' alphaQ=c(rep(1,length(Tree$tip.label)),rep(0,Tree$Nnode))
-#' DataPQ<-DataGenerating(100,100,alphaP,alphaQ,1000)
-#' sdP=apply(DataPQ$P,1,sd)
-#' sdQ=apply(DataPQ$Q,1,sd)
-#' SCalculation(sdP,sdQ,Tree,100/(100+100))
-#'
+#' Tree <- rtree(100)
+#' alphaP <- c(rep(1, length(Tree$tip.label)), rep(0, Tree$Nnode))
+#' alphaQ <- c(rep(1, length(Tree$tip.label)), rep(0, Tree$Nnode))
+#' DataPQ <- DataGenerating(100, 100, alphaP, alphaQ, 1000)
+#' sdP <- apply(DataPQ$P, 1, sd)
+#' sdQ <- apply(DataPQ$Q, 1, sd)
+#' SCalculation(sdP, sdQ, Tree, 100 / (100 + 100))
 #'
 #' @author Shulei Wang
-SCalculation <- function(sP,sQ,Tree,t)
-{
-  AccuProb <- function(rP,Tree)
-  {
-    TTedge=Tree$edge
-    m=length(Tree$tip.label)+Tree$Nnode
-    Nodenum=1:m
-    TTedge=Tree$edge
-    P=rP
+SCalculation <- function(sP, sQ, Tree, t) {
+  AccuProb <- function(rP, Tree) {
+    TTedge <- Tree$edge
+    m <- length(Tree$tip.label) + Tree$Nnode
+    Nodenum <- 1:m
+    TTedge <- Tree$edge
+    P <- rP
 
-    ND=NodeDepth(Tree)
+    ND <- NodeDepth(Tree)
 
-    maxDepth=max(ND)
+    maxDepth <- max(ND)
     for (k in 2:maxDepth)
     {
-      Tnode=Nodenum[ND==(maxDepth-k+2)]
-      Index=(TTedge[,2] %in% Tnode)
-      Tedge=matrix(TTedge[Index,],ncol=2)
-      for( i in 1:sum(Index))
+      Tnode <- Nodenum[ND == (maxDepth - k + 2)]
+      Index <- (TTedge[, 2] %in% Tnode)
+      Tedge <- matrix(TTedge[Index, ], ncol = 2)
+      for (i in 1:sum(Index))
       {
-        P[Tedge[i,1]]=P[Tedge[i,1]]+P[Tedge[i,2]]
+        P[Tedge[i, 1]] <- P[Tedge[i, 1]] + P[Tedge[i, 2]]
       }
     }
     return(P)
   }
 
-  NodeDepth <- function(Tree)
-  {
-    m=length(Tree$tip.label)+Tree$Nnode
-    Nodenum=1:m
+  NodeDepth <- function(Tree) {
+    m <- length(Tree$tip.label) + Tree$Nnode
+    Nodenum <- 1:m
 
-    Troot=tidytree::rootnode(tibble::as_tibble(Tree))
-    Troot=Troot$node
-    NodeDepth=rep(0,m)
-    NodeDepth[Troot]=1
-    Depth=1
-    TTedge=Tree$edge
-    while (sum(NodeDepth<=0)>0)
-    {
-      Tnode=Nodenum[NodeDepth==Depth]
-      Index=(TTedge[,1] %in% Tnode)
-      Tedge=matrix(TTedge[Index,],ncol=2)
-      Depth=Depth+1
-      for( i in 1:sum(Index))
+    Troot <- tidytree::rootnode(tibble::as_tibble(Tree))
+    Troot <- Troot$node
+    NodeDepth <- rep(0, m)
+    NodeDepth[Troot] <- 1
+    Depth <- 1
+    TTedge <- Tree$edge
+    while (sum(NodeDepth <= 0) > 0) {
+      Tnode <- Nodenum[NodeDepth == Depth]
+      Index <- (TTedge[, 1] %in% Tnode)
+      Tedge <- matrix(TTedge[Index, ], ncol = 2)
+      Depth <- Depth + 1
+      for (i in 1:sum(Index))
       {
-        NodeDepth[Tedge[i,2]]=Depth
+        NodeDepth[Tedge[i, 2]] <- Depth
       }
     }
     return(NodeDepth)
@@ -250,38 +239,37 @@ SCalculation <- function(sP,sQ,Tree,t)
   stopifnot(is.vector(sQ))
   stopifnot(is(Tree, "phylo"))
   stopifnot(is.numeric(t))
-  stopifnot(t<=1&&t>0)
-  stopifnot(length(sP)==length(sQ))
-  stopifnot(length(sP)==length(Tree$tip.label)+Tree$Nnode)
-  stopifnot(all(sP>=0))
-  stopifnot(all(sQ>=0))
+  stopifnot(t <= 1 && t > 0)
+  stopifnot(length(sP) == length(sQ))
+  stopifnot(length(sP) == length(Tree$tip.label) + Tree$Nnode)
+  stopifnot(all(sP >= 0))
+  stopifnot(all(sQ >= 0))
 
-  EdgeP<-AccuProb(sP,Tree)
-  EdgeQ<-AccuProb(sQ,Tree)
-  ASigma=EdgeP*(1-t)+EdgeQ*t
+  EdgeP <- AccuProb(sP, Tree)
+  EdgeQ <- AccuProb(sQ, Tree)
+  ASigma <- EdgeP * (1 - t) + EdgeQ * t
 
-  J=20
-  s=length(ASigma)
-  Nodenum=1:s
-  NDepth=NodeDepth(Tree)
-  STpi=0
+  J <- 20
+  s <- length(ASigma)
+  Nodenum <- 1:s
+  NDepth <- NodeDepth(Tree)
+  STpi <- 0
 
   for (j in 1:J)
   {
-    TThre=4/(2^j)
-    TNList=Nodenum[(ASigma<TThre)&(ASigma>=TThre/2)]
-    TNListND=NDepth[TNList]
+    TThre <- 4 / (2^j)
+    TNList <- Nodenum[(ASigma < TThre) & (ASigma >= TThre / 2)]
+    TNListND <- NDepth[TNList]
 
-    while (length(TNList)>0)
-    {
-      TempMinIndex=which(TNListND==max(TNListND))[1]
-      TAncesor=c(tidytree::ancestor(tibble::as_tibble(Tree), TNList[TempMinIndex])$node,TNList[TempMinIndex])
-      TAncesor=TAncesor[(ASigma[TAncesor]<TThre)&(ASigma[TAncesor]>=TThre/2)]
-      STpi=STpi+1
+    while (length(TNList) > 0) {
+      TempMinIndex <- which(TNListND == max(TNListND))[1]
+      TAncesor <- c(tidytree::ancestor(tibble::as_tibble(Tree), TNList[TempMinIndex])$node, TNList[TempMinIndex])
+      TAncesor <- TAncesor[(ASigma[TAncesor] < TThre) & (ASigma[TAncesor] >= TThre / 2)]
+      STpi <- STpi + 1
 
-      TempTNLIndex=TNList %in% TAncesor
-      TNListND=TNListND[!TempTNLIndex]
-      TNList=TNList[!TempTNLIndex]
+      TempTNLIndex <- TNList %in% TAncesor
+      TNListND <- TNListND[!TempTNLIndex]
+      TNList <- TNList[!TempTNLIndex]
     }
   }
 
@@ -312,26 +300,25 @@ SCalculation <- function(sP,sQ,Tree,t)
 #' @export
 #'
 #' @examples
-#' alphaP=rep(100,1)
-#' alphaQ=rep(100,2)
-#' DataGenerating(100,100,alphaP,alphaQ,10000)
+#' alphaP <- rep(100, 1)
+#' alphaQ <- rep(100, 2)
+#' DataGenerating(100, 100, alphaP, alphaQ, 10000)
 #'
 #' @author Shulei Wang
-DataGenerating <- function(mP,mQ,alphaP,alphaQ,n)
-{
-  trP=t(gtools::rdirichlet(mP, alphaP))
-  trQ=t(gtools::rdirichlet(mQ, alphaQ))
+DataGenerating <- function(mP, mQ, alphaP, alphaQ, n) {
+  trP <- t(gtools::rdirichlet(mP, alphaP))
+  trQ <- t(gtools::rdirichlet(mQ, alphaQ))
   for (i in 1:mP)
   {
-    trP[,i]=stats::rmultinom(1,n,trP[,i])
-    trP[,i]=trP[,i]/sum(trP[,i])
+    trP[, i] <- stats::rmultinom(1, n, trP[, i])
+    trP[, i] <- trP[, i] / sum(trP[, i])
   }
 
   for (i in 1:mQ)
   {
-    trQ[,i]=stats::rmultinom(1,n,trQ[,i])
-    trQ[,i]=trQ[,i]/sum(trQ[,i])
+    trQ[, i] <- stats::rmultinom(1, n, trQ[, i])
+    trQ[, i] <- trQ[, i] / sum(trQ[, i])
   }
 
-  return(list(P=trP,Q=trQ))
+  return(list(P = trP, Q = trQ))
 }

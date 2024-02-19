@@ -11,7 +11,7 @@ IndDAFOT(P, Y, tree, method = "Dn", step = 200)
 
 \item{Y}{A vector. The interested variable.}
 
-\item{tree}{\code{\phylo} class. Phylogenetic tree.}
+\item{tree}{\code{phylo} class. Phylogenetic tree.}
 
 \item{method}{Dn or Rn or Tn. Dn is the Hoeffding's D test; Rn is the Blum-Kiefer-Rosenblatt's R; Tn is the Bergsma-Dassios-Yanaginoto's tau test.}
 
