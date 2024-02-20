@@ -317,7 +317,7 @@ SCalculation <- function(sP,sQ,Tree,t)
 #' DataGenerating(100,100,alphaP,alphaQ,10000)
 #'
 #' @author Shulei Wang
-DataGenerating <- function(mP, mQ, alphaP, alphaQ, n)
+DataGenerating <- function(mP,mQ,alphaP,alphaQ,n)
 {
   trP=t(gtools::rdirichlet(mP, alphaP))
   trQ=t(gtools::rdirichlet(mQ, alphaQ))

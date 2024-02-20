@@ -25,7 +25,9 @@ ConIndDAFOT(
 
 \item{X}{The confounding variables. Row represents samples. Each column corresponds to each confounding variable.}
 
-\item{condgen}{\code{\function}. Conditional distribution generating function.}
+\item{Tree}{\code{phylo} class. Phylogenetic tree.}
+
+\item{condgen}{\code{function}. Conditional distribution generating function.}
 
 \item{ExY}{Extra data generated from the conditional distribution of Y given X.}
 
@@ -38,8 +40,6 @@ ConIndDAFOT(
 \item{neighbor}{the number of neighbors to estimate local rank correlation.}
 
 \item{step}{Permutation times.}
-
-\item{tree}{\code{\phylo} class. Phylogenetic tree.}
 }
 \value{
 a \code{list} with components:
