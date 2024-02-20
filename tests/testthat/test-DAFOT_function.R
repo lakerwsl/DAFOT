@@ -7,22 +7,22 @@ test_that("DAFOT function returns expected results", {
   DataPQ <- DataGenerating(100, 100, alphaP, alphaQ, 1000)
   P <- DataPQ$P
   Q <- DataPQ$Q
-  
+
   # Test DAFOT function
   dafot_result <- DAFOT(P, Q, Tree, 100, 0.05)
-  
+
   # Check the class of the result
   expect_s3_class(dafot_result, "dafot")
-  
+
   # Check if all components are present
   expect_named(dafot_result, c("Stat", "P", "Thre", "Active"))
-  
+
   # Check if the Stat component is numeric
   expect_type(dafot_result$Stat, "double")
-  
+
   # Check if the P component is numeric
   expect_type(dafot_result$P, "double")
-  
+
   # Check if the Thre component is numeric
   expect_type(dafot_result$Thre, "double")
 })
@@ -36,10 +36,10 @@ test_that("SCalculation function returns expected results", {
   DataPQ <- DataGenerating(100, 100, alphaP, alphaQ, 1000)
   sdP <- apply(DataPQ$P, 1, sd)
   sdQ <- apply(DataPQ$Q, 1, sd)
-  
+
   # Test SCalculation function
-  s_calculation_result <- SCalculation(sdP, sdQ, Tree, 100/(100 + 100))
-  
+  s_calculation_result <- SCalculation(sdP, sdQ, Tree, 100 / (100 + 100))
+
   # Check if the result is numeric
   expect_type(s_calculation_result, "double")
 })
@@ -52,17 +52,17 @@ test_that("DataGenerating function generates expected data structure", {
   alphaP <- rep(100, 1)
   alphaQ <- rep(100, 2)
   n <- 10000
-  
+
   # Test DataGenerating function
   data_generated <- DataGenerating(mP, mQ, alphaP, alphaQ, n)
-  
+
   # Check if the result is a list
   expect_type(data_generated, "list")
-  
+
   # Check if the dimensions of matrices are correct
   expect_equal(dim(data_generated$P), c(length(alphaP), mP))
   expect_equal(dim(data_generated$Q), c(length(alphaQ), mQ))
-  
+
   # Check if probabilities sum to 1 for each sample
   expect_true(all(abs(apply(data_generated$P, 2, sum) - 1) < 1e-6))
   expect_true(all(abs(apply(data_generated$Q, 2, sum) - 1) < 1e-6))
