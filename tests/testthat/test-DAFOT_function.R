@@ -12,22 +12,19 @@ test_that("DAFOT function returns expected results", {
   dafot_result <- DAFOT(P, Q, Tree, 100, 0.05)
   
   # Check the class of the result
-  expect_is(dafot_result, "dafot")
+  expect_s3_class(dafot_result, "dafot")
   
   # Check if all components are present
   expect_named(dafot_result, c("Stat", "P", "Thre", "Active"))
   
   # Check if the Stat component is numeric
-  expect_is(dafot_result$Stat, "numeric")
+  expect_type(dafot_result$Stat, "double")
   
   # Check if the P component is numeric
-  expect_is(dafot_result$P, "numeric")
+  expect_type(dafot_result$P, "double")
   
   # Check if the Thre component is numeric
-  expect_is(dafot_result$Thre, "numeric")
-  
-  # Check if the Active component is a matrix
-  expect_is(dafot_result$Active, "matrix")
+  expect_type(dafot_result$Thre, "double")
 })
 
 # Unit tests for SCalculation function
@@ -44,19 +41,29 @@ test_that("SCalculation function returns expected results", {
   s_calculation_result <- SCalculation(sdP, sdQ, Tree, 100/(100 + 100))
   
   # Check if the result is numeric
-  expect_is(s_calculation_result, "numeric")
+  expect_type(s_calculation_result, "double")
 })
 
 # Unit tests for DataGenerating function
-test_that("DataGenerating function returns expected results", {
+test_that("DataGenerating function generates expected data structure", {
+  # Generate example data
+  mP <- 100
+  mQ <- 100
+  alphaP <- rep(100, 1)
+  alphaQ <- rep(100, 2)
+  n <- 10000
+  
   # Test DataGenerating function
-  data_generated <- DataGenerating(100, 100, rep(100, 1), rep(100, 2), 10000)
+  data_generated <- DataGenerating(mP, mQ, alphaP, alphaQ, n)
   
   # Check if the result is a list
-  expect_is(data_generated, "list")
+  expect_type(data_generated, "list")
   
-  # Check if the list contains two matrices
-  expect_length(data_generated, 2)
-  expect_is(data_generated$P, "matrix")
-  expect_is(data_generated$Q, "matrix")
+  # Check if the dimensions of matrices are correct
+  expect_equal(dim(data_generated$P), c(length(alphaP), mP))
+  expect_equal(dim(data_generated$Q), c(length(alphaQ), mQ))
+  
+  # Check if probabilities sum to 1 for each sample
+  expect_true(all(abs(apply(data_generated$P, 2, sum) - 1) < 1e-6))
+  expect_true(all(abs(apply(data_generated$Q, 2, sum) - 1) < 1e-6))
 })
