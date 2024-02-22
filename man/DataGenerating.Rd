@@ -27,9 +27,9 @@ DataGenerating(mP, mQ, alphaP, alphaQ, n)
 This function is used to generate m distributions from Dirichlet, and draw samples from multinomial distribution.
 }
 \examples{
-alphaP=rep(100,1)
-alphaQ=rep(100,2)
-DataGenerating(100,100,alphaP,alphaQ,10000)
+alphaP <- rep(100, 1)
+alphaQ <- rep(100, 2)
+DataGenerating(100, 100, alphaP, alphaQ, 10000)
 
 }
 \seealso{

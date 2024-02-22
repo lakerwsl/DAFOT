@@ -36,12 +36,11 @@ This function is developed based on an optimal transport perspective. It can hel
 }
 \examples{
 library(ape)
-Tree=rtree(100)
-alphaP=c(rep(1,length(Tree$tip.label)),rep(0,Tree$Nnode))
-alphaQ=c(rep(1,length(Tree$tip.label)),rep(0,Tree$Nnode))
-DataPQ<-DataGenerating(100,100,alphaP,alphaQ,1000)
-DAFOT(DataPQ$P,DataPQ$Q,Tree,100,0.05)
-
+Tree <- rtree(100)
+alphaP <- c(rep(1, length(Tree$tip.label)), rep(0, Tree$Nnode))
+alphaQ <- c(rep(1, length(Tree$tip.label)), rep(0, Tree$Nnode))
+DataPQ <- DataGenerating(100, 100, alphaP, alphaQ, 1000)
+DAFOT(DataPQ$P, DataPQ$Q, Tree, 100, 0.05)
 
 }
 \seealso{
