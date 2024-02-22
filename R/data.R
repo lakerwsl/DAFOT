@@ -10,7 +10,7 @@
 "test_IndDAFOT"
 
 #' A data set designed for testing the ConIndDAFOT function
-#' 
+#'
 #' @format ## `test_ConIndDAFOT`
 #' A named list:
 #' \describe {
