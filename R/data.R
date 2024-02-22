@@ -1,4 +1,4 @@
-#' A data set designed for testing IndDAFOT function
+#' A data set designed for testing the IndDAFOT function
 #'
 #' @format ## `test_IndDAFOT`
 #' A named list:
@@ -8,3 +8,19 @@
 #'   \item{tree}{Tree}
 #' }
 "test_IndDAFOT"
+
+#' A data set designed for testing the ConIndDAFOT function
+#' 
+#' @format ## `test_ConIndDAFOT`
+#' A named list:
+#' \describe {
+#'   \item {P} {Relative abundances}
+#'   \item {Y} {Outcome}
+#'   \item {X} {Confounding effects}
+#'   \item {tree} {Tree}
+#'   \item {condgen} {}
+#'   \item {ExY} {}
+#'   \item {ExX} {}
+#'   \item {Exk} {}
+#' }
+"test_ConIndDAFOT"
