@@ -25,9 +25,9 @@
 #' An object of class \code{dafot} is a list containing following components:
 #' \itemize{
 #' \item \code{Stat} the maximum of test statistics
-#' \item \code{PValue} P value calculated from permutation test
-#' \item \code{StatThre} the threshold for alpha level test
-#' \item \code{ActiveEdge} the set of active edges
+#' \item \code{P} P value calculated from permutation test
+#' \item \code{Thre} the threshold for alpha level test
+#' \item \code{Active} the set of active edges
 #' }
 #'
 #' @export

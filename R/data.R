@@ -1,8 +1,19 @@
+#' A data set designed for testing the DAFOT function
+#'
+#' @format ## `test_DAFOT`
+#' A named list:
+#' \itemize{
+#'   \item {P} {First group}
+#'   \item {Q} {Second group}
+#'   \item {tree} {Tree}
+#' }
+"test_DAFOT"
+
 #' A data set designed for testing the IndDAFOT function
 #'
 #' @format ## `test_IndDAFOT`
 #' A named list:
-#' \describe{
+#' \itemize{
 #'   \item{P}{Relative abundances}
 #'   \item{Y}{Outcome}
 #'   \item{tree}{Tree}
@@ -13,7 +24,7 @@
 #'
 #' @format ## `test_ConIndDAFOT`
 #' A named list:
-#' \describe {
+#' \itemize{
 #'   \item {P} {Relative abundances}
 #'   \item {Y} {Outcome}
 #'   \item {X} {Confounding effects}

@@ -7,7 +7,7 @@
 \format{
 ## `test_ConIndDAFOT`
 A named list:
-\describe {
+\itemize{
   \item {P} {Relative abundances}
   \item {Y} {Outcome}
   \item {X} {Confounding effects}

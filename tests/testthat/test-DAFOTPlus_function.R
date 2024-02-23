@@ -1,18 +1,30 @@
-test_that("IndDAFOT function works as expected", {
+test_that("IndDAFOT function works on highly correlated data", {
   d <- test_IndDAFOT
-  res <- IndDAFOT(d$P, d$Y, d$tree)
+  step <- 49
 
-  expect_true(all(res$P < 0.05))
+  start_time <- Sys.time()
+  res <- IndDAFOT(d$P, d$Y, d$tree)
+  end_time <- Sys.time()
+
+  print(paste((end_time - start_time) / step, " per step for IndDAFOT"))
+  expect_true(all(res$P == 1 / (1 + step)))
 })
 
-# ~5s per iteration (step value) on test data
-test_that("ConIndDAFOT function works as expected", {
+test_that("ConIndDAFOT function works on highly correlated data", {
   d <- test_ConIndDAFOT
-  # res_condgen <- ConIndDAFOT(d$P, d$Y, d$X, d$tree, condgen = d$condgen, step = 5)
+  step <- 3
 
+  start_time_condgen <- Sys.time()
+  res_condgen <- ConIndDAFOT(d$P, d$Y, d$X, d$tree, condgen = d$condgen, step = step)
+  end_time_condgen <- Sys.time()
 
+  print(paste((end_time_condgen - start_time_condgen) / step, " per step for ConIndDAFOT with condgen"))
+  expect_true(all(res_condgen$P == 1 / (1 + step)))
 
-  res_Ex <- ConIndDAFOT(d$P, d$Y, d$X, d$tree, ExY = d$ExY, ExX = d$ExX, Exk = d$Exk, step = 5)
+  start_time_Ex <- Sys.time()
+  res_Ex <- ConIndDAFOT(d$P, d$Y, d$X, d$tree, ExY = d$ExY, ExX = d$ExX, Exk = d$Exk, step = step)
+  end_time_Ex <- Sys.time()
 
-  expect_true(all(res_Ex$P < 0.05))
+  print(paste((end_time_Ex - start_time_Ex) / step, " per step for ConIndDAFOT with Ex's"))
+  expect_true(all(res_Ex$P == 1 / (1 + step)))
 })
