@@ -17,7 +17,7 @@ P <- matrix(0, nrow = length(tree$tip.label) + tree$Nnode, ncol = n)
 Q <- matrix(0, nrow = length(tree$tip.label) + tree$Nnode, ncol = n)
 
 for (i in 1:n) {
-  alphaP <- alphaQ <- c(rep(1, length(tree$tip.label)), rep(0, tree$Nnode))
+  alphaP <- alphaQ <- c(rep(1, length(tree$tip.label)), rep(1, tree$Nnode))
   alphaP[Clade1] <- alphaP[Clade1] + runif(length(alphaP[Clade1]), max = 5)
   alphaQ[Clade1] <- alphaQ[Clade1] + runif(length(alphaQ[Clade1]), max = 5)
 

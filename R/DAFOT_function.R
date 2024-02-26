@@ -41,7 +41,7 @@
 #' DAFOT(DataPQ$P, DataPQ$Q, Tree, 100, 0.05)
 #'
 #' @author Shulei Wang
-DAFOT <- function(P, Q, Tree, times, alpha) {
+DAFOT <- function(P, Q, Tree, times = 200, alpha = 0.05) {
   AccuProbMt <- function(rP, Tree) {
     TTedge <- Tree$edge
     m <- length(Tree$tip.label) + Tree$Nnode

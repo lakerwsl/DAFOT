@@ -4,7 +4,7 @@
 \alias{DAFOT}
 \title{Detector of Active Flow on a Tree}
 \usage{
-DAFOT(P, Q, Tree, times, alpha)
+DAFOT(P, Q, Tree, times = 200, alpha = 0.05)
 }
 \arguments{
 \item{P}{A matrix. Compositional data of 1st group, each row corresponds to each node of tree and each column corresponds to each sample.}
