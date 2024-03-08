@@ -25,9 +25,9 @@
 #' An object of class \code{dafot} is a list containing following components:
 #' \itemize{
 #' \item \code{Stat} the maximum of test statistics
-#' \item \code{PValue} P value calculated from permutation test
-#' \item \code{StatThre} the threshold for alpha level test
-#' \item \code{ActiveEdge} the set of active edges
+#' \item \code{P} P value calculated from permutation test
+#' \item \code{Thre} the threshold for alpha level test
+#' \item \code{Active} the set of active edges
 #' }
 #'
 #' @export
@@ -38,10 +38,11 @@
 #' alphaP <- c(rep(1, length(Tree$tip.label)), rep(0, Tree$Nnode))
 #' alphaQ <- c(rep(1, length(Tree$tip.label)), rep(0, Tree$Nnode))
 #' DataPQ <- DataGenerating(100, 100, alphaP, alphaQ, 1000)
-#' DAFOT(DataPQ$P, DataPQ$Q, Tree, 100, 0.05)
+#' n <- 50
+#' DAFOT(DataPQ$P, DataPQ$Q, Tree, n, 0.05)
 #'
 #' @author Shulei Wang
-DAFOT <- function(P, Q, Tree, times, alpha) {
+DAFOT <- function(P, Q, Tree, times = 200, alpha = 0.05) {
   AccuProbMt <- function(rP, Tree) {
     TTedge <- Tree$edge
     m <- length(Tree$tip.label) + Tree$Nnode

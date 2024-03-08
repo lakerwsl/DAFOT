@@ -4,7 +4,7 @@
 \alias{DAFOT}
 \title{Detector of Active Flow on a Tree}
 \usage{
-DAFOT(P, Q, Tree, times, alpha)
+DAFOT(P, Q, Tree, times = 200, alpha = 0.05)
 }
 \arguments{
 \item{P}{A matrix. Compositional data of 1st group, each row corresponds to each node of tree and each column corresponds to each sample.}
@@ -23,9 +23,9 @@ DAFOT(P, Q, Tree, times, alpha)
 An object of class \code{dafot} is a list containing following components:
 \itemize{
 \item \code{Stat} the maximum of test statistics
-\item \code{PValue} P value calculated from permutation test
-\item \code{StatThre} the threshold for alpha level test
-\item \code{ActiveEdge} the set of active edges
+\item \code{P} P value calculated from permutation test
+\item \code{Thre} the threshold for alpha level test
+\item \code{Active} the set of active edges
 }
 }
 \description{
@@ -36,12 +36,12 @@ This function is developed based on an optimal transport perspective. It can hel
 }
 \examples{
 library(ape)
-Tree=rtree(100)
-alphaP=c(rep(1,length(Tree$tip.label)),rep(0,Tree$Nnode))
-alphaQ=c(rep(1,length(Tree$tip.label)),rep(0,Tree$Nnode))
-DataPQ<-DataGenerating(100,100,alphaP,alphaQ,1000)
-DAFOT(DataPQ$P,DataPQ$Q,Tree,100,0.05)
-
+Tree <- rtree(100)
+alphaP <- c(rep(1, length(Tree$tip.label)), rep(0, Tree$Nnode))
+alphaQ <- c(rep(1, length(Tree$tip.label)), rep(0, Tree$Nnode))
+DataPQ <- DataGenerating(100, 100, alphaP, alphaQ, 1000)
+n <- 50
+DAFOT(DataPQ$P, DataPQ$Q, Tree, n, 0.05)
 
 }
 \seealso{

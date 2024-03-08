@@ -1,39 +1,30 @@
-test_that("IndDAFOT function works as expected", {
-  # Generate example data
-  Tree <- rtree(100)
-  P <- rbind(
-    matrix(1, nrow = length(Tree$tip.label), ncol = 100),
-    matrix(0, nrow = Tree$Nnode, ncol = 100)
-  )
-  Y <- c(rep(1, 50), rep(2, 50))
+test_that("IndDAFOT function works on highly correlated data", {
+  d <- test_IndDAFOT
+  step <- 49
 
-  # Test IndDAFOT function
-  result <- IndDAFOT(P, Y, Tree)
+  start_time <- Sys.time()
+  res <- IndDAFOT(d$P, d$Y, d$tree)
+  end_time <- Sys.time()
 
-  # Check if the result is a list with components Stat and P
-  expect_type(result, "list")
-  expect_named(result, c("Stat", "P"))
-  expect_length(result$Stat, 2)
-  expect_length(result$P, 2)
+  print(paste((end_time - start_time) / step, " per step for IndDAFOT"))
+  expect_true(all(res$P < 0.05))
 })
 
-### TAKES WAY TOO LONG
-test_that("ConIndDAFOT function works as expected", {
-  # Generate example data
-  Tree <- rtree(100)
-  P <- rbind(
-    matrix(1, nrow = length(Tree$tip.label), ncol = 100),
-    matrix(0, nrow = Tree$Nnode, ncol = 100)
-  )
-  Y <- c(rep(1, 50), rep(2, 50))
-  X <- matrix(rnorm(500), nrow = 100)
+test_that("ConIndDAFOT function works on highly correlated data", {
+  d <- test_ConIndDAFOT
+  step <- 49
 
-  # Test ConIndDAFOT function
-  # result <- ConIndDAFOT(P, Y, X, Tree)
+  start_time_condgen <- Sys.time()
+  res_condgen <- ConIndDAFOT(d$P, d$Y, d$X, d$tree, condgen = d$condgen, step = step)
+  end_time_condgen <- Sys.time()
 
-  # Check if the result is a list with components Stat and P
-  # expect_type(result, "list")
-  # expect_named(result, c("Stat", "P"))
-  # expect_length(result$Stat, 2)
-  # expect_length(result$P, 2)
+  print(paste((end_time_condgen - start_time_condgen) / step, " per step for ConIndDAFOT with condgen"))
+  expect_true(all(res_condgen$P < 0.05))
+
+  start_time_Ex <- Sys.time()
+  res_Ex <- ConIndDAFOT(d$P, d$Y, d$X, d$tree, ExY = d$ExY, ExX = d$ExX, Exk = d$Exk, step = step)
+  end_time_Ex <- Sys.time()
+
+  print(paste((end_time_Ex - start_time_Ex) / step, " per step for ConIndDAFOT with Ex's"))
+  expect_true(all(res_Ex$P < 0.05))
 })

@@ -28,9 +28,13 @@
 #' @examples
 #' library(ape)
 #' Tree <- rtree(100)
-#' P <- rbind(matrix(1, nrow = length(Tree$tip.label), ncol = 100), matrix(0, nrow = Tree$Nnode, ncol = 100))
+#' P <- rbind(
+#'   matrix(1, nrow = length(Tree$tip.label), ncol = 100),
+#'   matrix(0, nrow = Tree$Nnode, ncol = 100)
+#' )
 #' Y <- c(rep(1, 50), rep(2, 50))
-#' IndDAFOT(P, Y, Tree)
+#' n <- 1
+#' IndDAFOT(P, Y, Tree, step = n)
 IndDAFOT <- function(P, Y, tree, method = "Dn", step = 200) {
   # Correlation between one single edge and Y
   tree.corr <- function(EdgeP, Y, method, weight = F) {
@@ -155,10 +159,14 @@ EdgeLExtract <- function(Tree) {
 #' @examples
 #' library(ape)
 #' Tree <- rtree(100)
-#' P <- rbind(matrix(1, nrow = length(Tree$tip.label), ncol = 100), matrix(0, nrow = Tree$Nnode, ncol = 100))
+#' P <- rbind(
+#'   matrix(1, nrow = length(Tree$tip.label), ncol = 100),
+#'   matrix(0, nrow = Tree$Nnode, ncol = 100)
+#' )
 #' Y <- c(rep(1, 50), rep(2, 50))
 #' X <- matrix(rnorm(500), nrow = 100)
-#' ConIndDAFOT(P, Y, X, Tree)
+#' n <- 1
+#' ConIndDAFOT(P, Y, X, Tree, step = n)
 ConIndDAFOT <- function(P, Y, X, Tree, condgen = NULL, ExY = NULL, ExX = NULL, Exk = min(10, length(ExY)), method = "Dn", neighbor = min(10, length(Y)), step = 200) {
   tree.corr.cond <- function(EdgeP, Y, X, method, neighbor = min(10, length(Y)), weight = F) {
     n <- ncol(EdgeP)

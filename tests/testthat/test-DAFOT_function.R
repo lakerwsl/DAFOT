@@ -1,6 +1,19 @@
-# Unit tests for DAFOT function
-test_that("DAFOT function returns expected results", {
+test_that("DAFOT function works on highly correlated data", {
+  d <- test_DAFOT
+  step <- 199
+
+  start_time <- Sys.time()
+  res <- DAFOT(d$P, d$Q, d$tree, step, 0.05)
+  end_time <- Sys.time()
+
+  print(paste((end_time - start_time) / step, " per step for DAFOT"))
+  expect_true(res$P < 0.05)
+  expect_equal(res$Active[, 2], c(169, 170))
+})
+
+test_that("DAFOT function returns poorly correlated results on randomly generated data", {
   # Generate example data
+  set.seed(12345)
   Tree <- rtree(100)
   alphaP <- c(rep(1, length(Tree$tip.label)), rep(0, Tree$Nnode))
   alphaQ <- c(rep(1, length(Tree$tip.label)), rep(0, Tree$Nnode))
@@ -17,13 +30,15 @@ test_that("DAFOT function returns expected results", {
   # Check if all components are present
   expect_named(dafot_result, c("Stat", "P", "Thre", "Active"))
 
-  # Check if the Stat component is numeric
+  # Check Stat component
   expect_type(dafot_result$Stat, "double")
+  expect_gt(dafot_result$Stat, 1)
 
-  # Check if the P component is numeric
+  # Check P component
   expect_type(dafot_result$P, "double")
+  expect_gt(dafot_result$P, 0.05)
 
-  # Check if the Thre component is numeric
+  # Check Thre component
   expect_type(dafot_result$Thre, "double")
 })
 

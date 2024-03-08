@@ -26,14 +26,13 @@ This function is used to calculate the effctive number of tree.
 }
 \examples{
 library(ape)
-Tree=rtree(100)
-alphaP=c(rep(1,length(Tree$tip.label)),rep(0,Tree$Nnode))
-alphaQ=c(rep(1,length(Tree$tip.label)),rep(0,Tree$Nnode))
-DataPQ<-DataGenerating(100,100,alphaP,alphaQ,1000)
-sdP=apply(DataPQ$P,1,sd)
-sdQ=apply(DataPQ$Q,1,sd)
-SCalculation(sdP,sdQ,Tree,100/(100+100))
-
+Tree <- rtree(100)
+alphaP <- c(rep(1, length(Tree$tip.label)), rep(0, Tree$Nnode))
+alphaQ <- c(rep(1, length(Tree$tip.label)), rep(0, Tree$Nnode))
+DataPQ <- DataGenerating(100, 100, alphaP, alphaQ, 1000)
+sdP <- apply(DataPQ$P, 1, sd)
+sdQ <- apply(DataPQ$Q, 1, sd)
+SCalculation(sdP, sdQ, Tree, 100 / (100 + 100))
 
 }
 \seealso{
