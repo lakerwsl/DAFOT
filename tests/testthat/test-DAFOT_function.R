@@ -8,7 +8,7 @@ test_that("DAFOT function works on highly correlated data", {
 
   print(paste((end_time - start_time) / step, " per step for DAFOT"))
   expect_true(res$P < 0.05)
-  expect_equal(res$Active[,2], c(169, 170))
+  expect_equal(res$Active[, 2], c(169, 170))
 })
 
 test_that("DAFOT function returns poorly correlated results on randomly generated data", {

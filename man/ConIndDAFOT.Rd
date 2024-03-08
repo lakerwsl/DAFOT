@@ -57,8 +57,12 @@ This method is designed to control confounding effect in the basis of IndDAFOT. 
 \examples{
 library(ape)
 Tree <- rtree(100)
-P <- rbind(matrix(1, nrow = length(Tree$tip.label), ncol = 100), matrix(0, nrow = Tree$Nnode, ncol = 100))
+P <- rbind(
+  matrix(1, nrow = length(Tree$tip.label), ncol = 100),
+  matrix(0, nrow = Tree$Nnode, ncol = 100)
+)
 Y <- c(rep(1, 50), rep(2, 50))
 X <- matrix(rnorm(500), nrow = 100)
-ConIndDAFOT(P, Y, X, Tree)
+n <- 1
+ConIndDAFOT(P, Y, X, Tree, step = n)
 }

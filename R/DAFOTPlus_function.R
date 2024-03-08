@@ -28,8 +28,10 @@
 #' @examples
 #' library(ape)
 #' Tree <- rtree(100)
-#' P <- rbind(matrix(1, nrow = length(Tree$tip.label), ncol = 100),
-#'            matrix(0, nrow = Tree$Nnode, ncol = 100))
+#' P <- rbind(
+#'   matrix(1, nrow = length(Tree$tip.label), ncol = 100),
+#'   matrix(0, nrow = Tree$Nnode, ncol = 100)
+#' )
 #' Y <- c(rep(1, 50), rep(2, 50))
 #' n <- 1
 #' IndDAFOT(P, Y, Tree, step = n)
@@ -157,8 +159,10 @@ EdgeLExtract <- function(Tree) {
 #' @examples
 #' library(ape)
 #' Tree <- rtree(100)
-#' P <- rbind(matrix(1, nrow = length(Tree$tip.label), ncol = 100),
-#'            matrix(0, nrow = Tree$Nnode, ncol = 100))
+#' P <- rbind(
+#'   matrix(1, nrow = length(Tree$tip.label), ncol = 100),
+#'   matrix(0, nrow = Tree$Nnode, ncol = 100)
+#' )
 #' Y <- c(rep(1, 50), rep(2, 50))
 #' X <- matrix(rnorm(500), nrow = 100)
 #' n <- 1
