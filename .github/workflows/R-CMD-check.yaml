@@ -41,7 +41,8 @@ jobs:
           
       - name: Install BiocManager
         run: |
-          echo "install.packages("BiocManager")" > biocmanager.R
+          echo "renv::status()" > biocmanager.R
+          echo "install.packages('BiocManager')" >> biocmanager.R
           Rscript biocmanager.R
 
       - uses: r-lib/actions/setup-r-dependencies@v2
