@@ -13,7 +13,8 @@ Imports:
   ape,
   gtools,
   independence,
-  RANN
+  RANN,
+  methods
 biocViews: 
 Remotes: chaim-e/independence
 License: MIT+file LICENSE
