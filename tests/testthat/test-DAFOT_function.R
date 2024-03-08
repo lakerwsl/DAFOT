@@ -13,6 +13,7 @@ test_that("DAFOT function works on highly correlated data", {
 
 test_that("DAFOT function returns poorly correlated results on randomly generated data", {
   # Generate example data
+  set.seed(12345)
   Tree <- rtree(100)
   alphaP <- c(rep(1, length(Tree$tip.label)), rep(0, Tree$Nnode))
   alphaQ <- c(rep(1, length(Tree$tip.label)), rep(0, Tree$Nnode))
