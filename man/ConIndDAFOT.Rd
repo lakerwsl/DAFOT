@@ -37,7 +37,7 @@ ConIndDAFOT(
 
 \item{method}{Dn or Rn or Tn. Dn is the Hoeffding's D test; Rn is the Blum-Kiefer-Rosenblatt's R; Tn is the Bergsma-Dassios-Yanaginoto's tau test.}
 
-\item{neighbor}{the number of neighbors to estimate local rank correlation.}
+\item{neighbor}{The number of neighbors to estimate local rank correlation.}
 
 \item{step}{Permutation times.}
 }

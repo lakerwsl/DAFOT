@@ -47,7 +47,7 @@ IndDAFOT <- function(P, Y, tree, method = "Dn", step = 200) {
   Y1 <- matrix(Y[sample_matrix], nrow = n)
   Phi <- t(apply(Y1, 2, function(Y) tree.corr(EdgeP, Y, method, weight = EdgeL)))
   Pvalue <- c(mean(c(Phi[, 1], t[1]) >= t[1]), mean(c(Phi[, 2], t[2]) >= t[2]))
-  
+
   list(Stat = t, P = Pvalue)
 }
 
@@ -75,7 +75,7 @@ IndDAFOT <- function(P, Y, tree, method = "Dn", step = 200) {
 #' @param ExX Extra data generated from the distribution of X.
 #' @param Exk the number of neighbors to draw Y from the neighbors of X.
 #' @param method Dn or Rn or Tn. Dn is the Hoeffding's D test; Rn is the Blum-Kiefer-Rosenblatt's R; Tn is the Bergsma-Dassios-Yanaginoto's tau test.
-#' @param neighbor the number of neighbors to estimate local rank correlation.
+#' @param neighbor The number of neighbors to estimate local rank correlation.
 #' @param step Permutation times.
 
 #'
@@ -108,7 +108,7 @@ ConIndDAFOT <- function(P, Y, X, Tree, condgen = NULL, ExY = NULL, ExX = NULL, E
   t <- tree.corr.cond(EdgeP, Y, X, method, weight = EdgeL, neighbor = neighbor)
 
   Phi <- matrix(0, nrow = step, ncol = 2)
-  
+
   if (!is.null(condgen)) {
     for (i in 1:step) {
       NewY <- sapply(1:nrow(X), function(i, X) {
@@ -118,7 +118,7 @@ ConIndDAFOT <- function(P, Y, X, Tree, condgen = NULL, ExY = NULL, ExX = NULL, E
     }
   } else if (!is.null(ExY) & !is.null(ExX)) {
     ExNN <- RANN::nn2(ExX, X, k = Exk)$nn.idx
-    
+
     for (i in 1:step) {
       NewIndex <- apply(ExNN, 1, sample, 1)
       NewY <- ExY[NewIndex]
@@ -127,15 +127,15 @@ ConIndDAFOT <- function(P, Y, X, Tree, condgen = NULL, ExY = NULL, ExX = NULL, E
   } else {
     distm <- as.matrix(stats::dist(X))
     NewIndex <- sapply(1:ncol(distm), function(X) order(distm[, X], decreasing = F)[1:neighbor])
-    
+
     for (i in 1:step) {
       Ind <- apply(NewIndex, 2, function(x) sample(x, 1))
       NewY <- Y[Ind]
       Phi[i, ] <- tree.corr.cond(EdgeP, NewY, X, method, weight = EdgeL, neighbor = neighbor)
     }
   }
-  
+
   PValue <- c(mean(c(Phi[, 1], t[1]) >= t[1]), mean(c(Phi[, 2], t[2]) >= t[2]))
-  
+
   list(Stat = t, P = PValue)
 }

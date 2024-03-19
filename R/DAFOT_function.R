@@ -66,7 +66,7 @@ DAFOT <- function(P, Q, tree, step = 200, alpha = 0.05) {
 
   EdgePQ <- cbind(EdgeP, EdgeQ)
   SimulatedRe <- rep(0, step)
-  
+
   for (i in 1:step)
   {
     sampleQ <- 1:(nP + nQ)
@@ -78,7 +78,7 @@ DAFOT <- function(P, Q, tree, step = 200, alpha = 0.05) {
     sDiffstat <- standEdge(sampleEdgeP, sampleEdgeQ, nP, nQ)
     SimulatedRe[i] <- max(sDiffstat)
   }
-  
+
   PValue <- (1 + sum(SimulatedRe > Stat)) / (1 + step)
   StatThre <- stats::quantile(SimulatedRe, 1 - alpha)
 
@@ -201,7 +201,7 @@ SCalculation <- function(sP, sQ, tree, t) {
 DataGenerating <- function(mP, mQ, alphaP, alphaQ, n) {
   trP <- t(gtools::rdirichlet(mP, alphaP))
   trQ <- t(gtools::rdirichlet(mQ, alphaQ))
-  
+
   for (i in 1:mP)
   {
     trP[, i] <- stats::rmultinom(1, n, trP[, i])
