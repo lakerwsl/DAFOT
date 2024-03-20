@@ -55,7 +55,9 @@ AccuProb <- function(P, Tree, r = FALSE) {
   P
 }
 
-#' Extract edge weights from the phylogenetic tree
+#' Extract sorted edge weights from the phylogenetic tree
+#' Add zero for the root node edge length
+#' Return all 0's if tree is invalid
 #'
 #' @importFrom tidytree rootnode
 #'
