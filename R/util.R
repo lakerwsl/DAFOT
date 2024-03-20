@@ -37,6 +37,8 @@ AccuProb <- function(P, Tree, r = FALSE) {
 }
 
 #' Return the depth of each node on the tree
+#' 
+#' @importFrom tidytree rootnode
 #'
 #' @param Tree \code{phylo} class. Phylogenetic tree.
 #'
@@ -44,7 +46,7 @@ AccuProb <- function(P, Tree, r = FALSE) {
 NodeDepth <- function(Tree) {
   m <- length(Tree$tip.label) + Tree$Nnode
   Nodenum <- 1:m
-  Troot <- tidytree::rootnode(Tree)
+  Troot <- rootnode(Tree)
   NodeDepth <- rep(0, m)
   NodeDepth[Troot] <- 1
   Depth <- 1
