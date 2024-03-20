@@ -18,5 +18,5 @@ test_that("EdgeLExtract returns the expected answer for a known tree", {
 })
 
 test_that("EdgeLExtract returns all 0's on invalid tree", {
-  
+
 })

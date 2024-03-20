@@ -2,7 +2,9 @@
 % Please edit documentation in R/util.R
 \name{EdgeLExtract}
 \alias{EdgeLExtract}
-\title{Extract edge weights from the phylogenetic tree}
+\title{Extract sorted edge weights from the phylogenetic tree
+Add zero for the root node edge length
+Return all 0's if tree is invalid}
 \usage{
 EdgeLExtract(Tree)
 }
@@ -13,5 +15,7 @@ EdgeLExtract(Tree)
 A vector of numerics representing edge weights on the tree.
 }
 \description{
-Extract edge weights from the phylogenetic tree
+Extract sorted edge weights from the phylogenetic tree
+Add zero for the root node edge length
+Return all 0's if tree is invalid
 }
