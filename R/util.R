@@ -1,3 +1,26 @@
+#' Return the depth of each node on the tree
+#' 
+#' @importFrom tidytree rootnode
+#'
+#' @param Tree \code{phylo} class. Phylogenetic tree.
+#'
+#' @return An integer vector containing the depth of each node.
+NodeDepth <- function(Tree) {
+  # Rewrite this function to use ape::nodepath
+  # It should start with 1 and go to the number of nodes in the tree (including tips)
+  # Looking through each list provided by nodepath until it finds the current node
+  # And then add that node's index (position in the list) to the list of depths
+  np <- ape::nodepath(Tree)
+  depths <- rep(0, length(Tree$tip.label) + Tree$Nnode)
+  for (i in 1:length(np)) {
+    for (j in 1:length(np[[i]])) {
+      depths[np[[i]][j]] <- j
+    }
+  }
+  
+  depths
+}
+
 #' Convert node abundance to edge abundance
 #'
 #' @param P A numeric matrix or data frame. Compositional data. Row represents nodes on the phylogenetic tree. Columns represents samples.
@@ -11,59 +34,29 @@ AccuProb <- function(P, Tree, r = FALSE) {
   Nodenum <- 1:m
   ND <- NodeDepth(Tree)
   maxDepth <- max(ND)
-
+  
   for (k in 2:maxDepth)
   {
     Tnode <- Nodenum[ND == (maxDepth - k + 2)]
     Index <- (TTedge[, 2] %in% Tnode)
     if (r) {
       Tedge <- matrix(TTedge[Index, ], ncol = 2)
-
+      
       for (i in 1:sum(Index))
       {
         P[Tedge[i, 1]] <- P[Tedge[i, 1]] + P[Tedge[i, 2]]
       }
     } else {
       Tedge <- TTedge[Index, , drop = FALSE]
-
+      
       for (i in 1:sum(Index))
       {
         P[Tedge[i, 1], ] <- P[Tedge[i, 1], ] + P[Tedge[i, 2], ]
       }
     }
   }
-
+  
   P
-}
-
-#' Return the depth of each node on the tree
-#' 
-#' @importFrom tidytree rootnode
-#'
-#' @param Tree \code{phylo} class. Phylogenetic tree.
-#'
-#' @return An integer vector containing the depth of each node.
-NodeDepth <- function(Tree) {
-  m <- length(Tree$tip.label) + Tree$Nnode
-  Nodenum <- 1:m
-  Troot <- rootnode(Tree)
-  NodeDepth <- rep(0, m)
-  NodeDepth[Troot] <- 1
-  Depth <- 1
-  TTedge <- Tree$edge
-
-  while (sum(NodeDepth <= 0) > 0) {
-    Tnode <- Nodenum[NodeDepth == Depth]
-    Index <- (TTedge[, 1] %in% Tnode)
-
-    if (sum(Index) > 0) {
-      Tedge <- TTedge[Index, , drop = FALSE]
-      Depth <- Depth + 1
-      NodeDepth[Tedge[, 2]] <- Depth
-    }
-  }
-
-  NodeDepth
 }
 
 #' Extract edge weights from the phylogenetic tree
