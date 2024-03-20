@@ -1,23 +1,19 @@
 #' Return the depth of each node on the tree
-#' 
-#' @importFrom tidytree rootnode
+#'
+#' @importFrom ape nodepath
 #'
 #' @param Tree \code{phylo} class. Phylogenetic tree.
 #'
 #' @return An integer vector containing the depth of each node.
 NodeDepth <- function(Tree) {
-  # Rewrite this function to use ape::nodepath
-  # It should start with 1 and go to the number of nodes in the tree (including tips)
-  # Looking through each list provided by nodepath until it finds the current node
-  # And then add that node's index (position in the list) to the list of depths
-  np <- ape::nodepath(Tree)
+  np <- nodepath(Tree)
   depths <- rep(0, length(Tree$tip.label) + Tree$Nnode)
   for (i in 1:length(np)) {
     for (j in 1:length(np[[i]])) {
       depths[np[[i]][j]] <- j
     }
   }
-  
+
   depths
 }
 
@@ -34,28 +30,28 @@ AccuProb <- function(P, Tree, r = FALSE) {
   Nodenum <- 1:m
   ND <- NodeDepth(Tree)
   maxDepth <- max(ND)
-  
+
   for (k in 2:maxDepth)
   {
     Tnode <- Nodenum[ND == (maxDepth - k + 2)]
     Index <- (TTedge[, 2] %in% Tnode)
     if (r) {
       Tedge <- matrix(TTedge[Index, ], ncol = 2)
-      
+
       for (i in 1:sum(Index))
       {
         P[Tedge[i, 1]] <- P[Tedge[i, 1]] + P[Tedge[i, 2]]
       }
     } else {
       Tedge <- TTedge[Index, , drop = FALSE]
-      
+
       for (i in 1:sum(Index))
       {
         P[Tedge[i, 1], ] <- P[Tedge[i, 1], ] + P[Tedge[i, 2], ]
       }
     }
   }
-  
+
   P
 }
 
