@@ -36,21 +36,7 @@
 #' n <- 1
 #' IndDAFOT(P, Y, Tree, step = n)
 IndDAFOT <- function(P, Y, tree, method = "Dn", step = 200) {
-  # Correlation between one single edge and Y
-  tree.corr <- function(EdgeP, Y, method, weight = F) {
-    n <- ncol(EdgeP)
-    if (method == "Dn") {
-      phi <- apply(EdgeP, 1, function(P) independence::hoeffding.D.test(P, Y, precision = 1, collisions = F)$Dn)
-    } else if (method == "Tn") {
-      phi <- apply(EdgeP, 1, function(P) independence::tau.star.test(P, Y, precision = 1, collisions = F)$Tn)
-    } else if (method == "Rn") {
-      phi <- apply(EdgeP, 1, function(P) independence::hoeffding.refined.test(P, Y, precision = 1, collisions = F)$Rn)
-    } else {
-      stop("Please choose valid method.")
-    }
-    return(c(sum(weight * phi), max(phi)))
-  }
-  EdgeP <- AccuProbMt(P, tree)
+  EdgeP <- AccuProb(P, tree)
   EdgeL <- EdgeLExtract(tree)
   EdgeP <- EdgeP[EdgeL > 0, ]
   EdgeL <- EdgeL[EdgeL > 0]
@@ -61,64 +47,9 @@ IndDAFOT <- function(P, Y, tree, method = "Dn", step = 200) {
   Y1 <- matrix(Y[sample_matrix], nrow = n)
   Phi <- t(apply(Y1, 2, function(Y) tree.corr(EdgeP, Y, method, weight = EdgeL)))
   Pvalue <- c(mean(c(Phi[, 1], t[1]) >= t[1]), mean(c(Phi[, 2], t[2]) >= t[2]))
-  return(list(Stat = t, P = Pvalue))
+
+  list(Stat = t, P = Pvalue)
 }
-
-
-# Convert node abundance to edge abundance
-AccuProbMt <- function(P, Tree) {
-  TTedge <- Tree$edge
-  m <- length(Tree$tip.label) + Tree$Nnode
-  Nodenum <- 1:m
-  ND <- NodeDepth(Tree)
-  maxDepth <- max(ND)
-  for (k in 2:maxDepth)
-  {
-    Tnode <- Nodenum[ND == (maxDepth - k + 2)]
-    Index <- (TTedge[, 2] %in% Tnode)
-    Tedge <- TTedge[Index, , drop = FALSE]
-    for (i in 1:sum(Index))
-    {
-      P[Tedge[i, 1], ] <- P[Tedge[i, 1], ] + P[Tedge[i, 2], ]
-    }
-  }
-  return(P)
-}
-
-# Return the depth of each node on the tree.
-NodeDepth <- function(Tree) {
-  m <- length(Tree$tip.label) + Tree$Nnode
-  Nodenum <- 1:m
-  Troot <- tidytree::rootnode(Tree)
-  NodeDepth <- rep(0, m)
-  NodeDepth[Troot] <- 1
-  Depth <- 1
-  TTedge <- Tree$edge
-  while (sum(NodeDepth <= 0) > 0) {
-    Tnode <- Nodenum[NodeDepth == Depth]
-    Index <- (TTedge[, 1] %in% Tnode)
-    if (sum(Index) > 0) {
-      Tedge <- TTedge[Index, , drop = FALSE]
-      Depth <- Depth + 1
-      NodeDepth[Tedge[, 2]] <- Depth
-    }
-  }
-  return(NodeDepth)
-}
-
-# Extract edge weights from the phylogenetic tree.
-EdgeLExtract <- function(Tree) {
-  Trank <- sort(Tree$edge[, 2], index.return = TRUE)
-  EdgeL <- Tree$edge.length[Trank$ix]
-  rootnum <- tidytree::rootnode(Tree)
-  if (rootnum > length(EdgeL)) {
-    EdgeL <- c(EdgeL, 0)
-  } else {
-    EdgeL <- c(EdgeL[1:(rootnum - 1)], 0, EdgeL[rootnum:length(EdgeL)])
-  }
-  return(EdgeL)
-}
-
 
 
 #' @title Phylogenetic Conditional Independence Test with Rank Correlation (ConIndDAFOT)
@@ -144,7 +75,7 @@ EdgeLExtract <- function(Tree) {
 #' @param ExX Extra data generated from the distribution of X.
 #' @param Exk the number of neighbors to draw Y from the neighbors of X.
 #' @param method Dn or Rn or Tn. Dn is the Hoeffding's D test; Rn is the Blum-Kiefer-Rosenblatt's R; Tn is the Bergsma-Dassios-Yanaginoto's tau test.
-#' @param neighbor the number of neighbors to estimate local rank correlation.
+#' @param neighbor The number of neighbors to estimate local rank correlation.
 #' @param step Permutation times.
 
 #'
@@ -168,26 +99,7 @@ EdgeLExtract <- function(Tree) {
 #' n <- 1
 #' ConIndDAFOT(P, Y, X, Tree, step = n)
 ConIndDAFOT <- function(P, Y, X, Tree, condgen = NULL, ExY = NULL, ExX = NULL, Exk = min(10, length(ExY)), method = "Dn", neighbor = min(10, length(Y)), step = 200) {
-  tree.corr.cond <- function(EdgeP, Y, X, method, neighbor = min(10, length(Y)), weight = F) {
-    n <- ncol(EdgeP)
-    d <- nrow(EdgeP)
-    distm <- as.matrix(stats::dist(X))
-    phi <- rep(0, d)
-    i.list <- apply(distm, 2, function(X) order(X, decreasing = F)[1:neighbor])
-    Y1 <- matrix(Y[i.list], nrow = nrow(i.list))
-    if (method == "Dn") {
-      phi <- rowSums(apply(i.list, 2, function(x) apply(EdgeP[, x], 1, function(P) independence::hoeffding.D.test(P, Y[x], precision = 1, collisions = F)$Dn)))
-    } else if (method == "Tn") {
-      phi <- rowSums(apply(i.list, 2, function(x) apply(EdgeP[, x], 1, function(P) independence::tau.star.test(P, Y[x], precision = 1, collisions = F)$Tn)))
-    } else if (method == "Rn") {
-      phi <- rowSums(apply(i.list, 2, function(x) apply(EdgeP[, x], 1, function(P) independence::hoeffding.refined.test(P, Y[x], precision = 1, collisions = F)$Rn)))
-    } else {
-      stop("Please choose valid method.")
-    }
-    phi <- phi / n
-    return(c(sum(weight * phi), max(phi)))
-  }
-  EdgeP <- AccuProbMt(P, Tree)
+  EdgeP <- AccuProb(P, Tree)
   EdgeL <- EdgeLExtract(Tree)
   EdgeP <- EdgeP[EdgeL > 0, ]
   EdgeL <- EdgeL[EdgeL > 0]
@@ -196,6 +108,7 @@ ConIndDAFOT <- function(P, Y, X, Tree, condgen = NULL, ExY = NULL, ExX = NULL, E
   t <- tree.corr.cond(EdgeP, Y, X, method, weight = EdgeL, neighbor = neighbor)
 
   Phi <- matrix(0, nrow = step, ncol = 2)
+
   if (!is.null(condgen)) {
     for (i in 1:step) {
       NewY <- sapply(1:nrow(X), function(i, X) {
@@ -205,6 +118,7 @@ ConIndDAFOT <- function(P, Y, X, Tree, condgen = NULL, ExY = NULL, ExX = NULL, E
     }
   } else if (!is.null(ExY) & !is.null(ExX)) {
     ExNN <- RANN::nn2(ExX, X, k = Exk)$nn.idx
+
     for (i in 1:step) {
       NewIndex <- apply(ExNN, 1, sample, 1)
       NewY <- ExY[NewIndex]
@@ -213,12 +127,15 @@ ConIndDAFOT <- function(P, Y, X, Tree, condgen = NULL, ExY = NULL, ExX = NULL, E
   } else {
     distm <- as.matrix(stats::dist(X))
     NewIndex <- sapply(1:ncol(distm), function(X) order(distm[, X], decreasing = F)[1:neighbor])
+
     for (i in 1:step) {
       Ind <- apply(NewIndex, 2, function(x) sample(x, 1))
       NewY <- Y[Ind]
       Phi[i, ] <- tree.corr.cond(EdgeP, NewY, X, method, weight = EdgeL, neighbor = neighbor)
     }
   }
+
   PValue <- c(mean(c(Phi[, 1], t[1]) >= t[1]), mean(c(Phi[, 2], t[2]) >= t[2]))
-  return(list(Stat = t, P = PValue))
+
+  list(Stat = t, P = PValue)
 }
