@@ -2,9 +2,9 @@
 #'
 #' @importFrom ape nodepath
 #'
-#' @param Tree \code{phylo} class. Phylogenetic tree
+#' @param Tree \code{phylo} class. Phylogenetic tree.
 #'
-#' @return An integer vector containing the depth of each node
+#' @return An integer vector containing the depth of each node.
 NodeDepth <- function(Tree) {
   np <- nodepath(Tree)
   depths <- rep(0, length(Tree$tip.label) + Tree$Nnode)
