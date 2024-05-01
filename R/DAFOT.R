@@ -52,8 +52,10 @@ DAFOT <- function(P, Q, tree, step = 200, alpha = 0.05) {
   stopifnot(nrow(P) == nrow(Q))
   stopifnot(nrow(P) == length(tree$tip.label) + tree$Nnode)
   print(apply(P, 2, sum))
+  stopifnot(var(apply(P, 2, sum)) == 0)
+  stopifnot(var(apply(Q, 2, sum)) == 0)
   #stopifnot(all(apply(P, 2, sum) == 1))
-  stopifnot(all(apply(Q, 2, sum) == 1))
+  #stopifnot(all(apply(Q, 2, sum) == 1))
   stopifnot(all(P >= 0))
   stopifnot(all(Q >= 0))
 
