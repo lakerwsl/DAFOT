@@ -2,7 +2,7 @@
 #'
 #' @description A phylogenetic independence test directly measures the association between the outcome of interest and the total microbial abundance in each lineage (subtree) by a rank correlation.
 #'
-#' @details This method is designed to capture possible nonlinear associations between the outcome of interest and microbial abundance. It aggeregates the rank correlations for different lineages in two ways: the weighted sum and maximum.
+#' @details This method is designed to capture possible nonlinear associations between the outcome of interest and microbial abundance. It aggregates the rank correlations for different lineages in two ways: the weighted sum and maximum.
 #'
 #' @importFrom independence hoeffding.D.test
 #' @importFrom independence tau.star.test
