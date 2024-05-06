@@ -19,6 +19,11 @@ DataGenerating(mP, mQ, alphaP, alphaQ, n)
 }
 \value{
 \code{DataGenerating} returns a list of two matrix of the raw data generated from Dirichlet-multinomial distribution.
+
+\describe{
+\item{P}{The data generated from the first group}
+\item{Q}{The data generated from the second group}
+}
 }
 \description{
 \code{DataGenerating} generate data from Dirichlet-multinomial distribution.

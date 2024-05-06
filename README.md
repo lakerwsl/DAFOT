@@ -54,8 +54,8 @@ Reference on all functions' inputs and outputs can be found in the package docum
 
 For `DAFOT` and `SCalculation` functions, please cite:
 
-Shulei Wang, T Tony Cai, Hongzhe Li, Hypothesis testing for phylogenetic composition: a minimum-cost flow perspective, Biometrika, Volume 108, Issue 1, March 2021, Pages 17–36, https://doi-org.proxy.library.upenn.edu/10.1093/biomet/asaa061
+Shulei Wang, T Tony Cai, Hongzhe Li, Hypothesis testing for phylogenetic composition: a minimum-cost flow perspective, Biometrika, Volume 108, Issue 1, March 2021, Pages 17–36, https://doi.org/10.1093/biomet/asaa061
 
 For `IndDAFOT` and `ConIndDAFOT` functions, please cite:
 
-Shulei Wang, Bo Yuan, T Tony Cai, Hongzhe Li, Phylogenetic association analysis with conditional rank correlation, Biometrika, 2023;, asad075, https://doi-org.proxy.library.upenn.edu/10.1093/biomet/asad075
+Shulei Wang, Bo Yuan, T Tony Cai, Hongzhe Li, Phylogenetic association analysis with conditional rank correlation, Biometrika, 2023;, asad075, https://doi.org/10.1093/biomet/asad075

@@ -21,11 +21,11 @@ DAFOT(P, Q, tree, step = 200, alpha = 0.05)
 \code{DAFOT} returns an object of class \code{dafot}.
 
 An object of class \code{dafot} is a list containing following components:
-\itemize{
-\item \code{Stat} the maximum of test statistics
-\item \code{P} P value calculated from permutation test
-\item \code{Thre} the threshold for alpha level test
-\item \code{Active} the set of active edges
+\describe{
+\item{Stat}{the maximum of test statistics}
+\item{P}{P value calculated from permutation test}
+\item{Thre}{the threshold for alpha level test}
+\item{Active}{the set of active edges}
 }
 }
 \description{

@@ -19,16 +19,16 @@ IndDAFOT(P, Y, tree, method = "Dn", step = 200)
 }
 \value{
 a \code{list} with components:
-\itemize{
-\item{ \code{Stat}, a vector with length 2. The first result is the correlation coefficient using the weighted sum approach; the second result is the correlation coefficient using maximum approach.}
-\item{ \code{P}, a vector with length 2. The first result is the obtained p-value using the weighted sum approache; the second result is the obtained p-value using maximum approach.}
+\describe{
+\item{Stat}{a vector with length 2. The first result is the correlation coefficient using the weighted sum approach; the second result is the correlation coefficient using maximum approach.}
+\item{P}{a vector with length 2. The first result is the obtained p-value using the weighted sum approach; the second result is the obtained p-value using maximum approach.}
 }
 }
 \description{
 A phylogenetic independence test directly measures the association between the outcome of interest and the total microbial abundance in each lineage (subtree) by a rank correlation.
 }
 \details{
-This method is designed to capture possible nonlinear associations between the outcome of interest and microbial abundance. It aggeregates the rank correlations for different lineages in two ways: the weighted sum and maximum.
+This method is designed to capture possible nonlinear associations between the outcome of interest and microbial abundance. It aggregates the rank correlations for different lineages in two ways: the weighted sum and maximum.
 }
 \examples{
 library(ape)
