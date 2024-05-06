@@ -19,9 +19,9 @@ IndDAFOT(P, Y, tree, method = "Dn", step = 200)
 }
 \value{
 a \code{list} with components:
-\itemize{
-\item{ \code{Stat}, a vector with length 2. The first result is the correlation coefficient using the weighted sum approach; the second result is the correlation coefficient using maximum approach.}
-\item{ \code{P}, a vector with length 2. The first result is the obtained p-value using the weighted sum approache; the second result is the obtained p-value using maximum approach.}
+\describe{
+\item{Stat}{a vector with length 2. The first result is the correlation coefficient using the weighted sum approach; the second result is the correlation coefficient using maximum approach.}
+\item{P}{a vector with length 2. The first result is the obtained p-value using the weighted sum approach; the second result is the obtained p-value using maximum approach.}
 }
 }
 \description{

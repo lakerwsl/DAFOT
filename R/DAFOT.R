@@ -23,11 +23,11 @@
 #' @return \code{DAFOT} returns an object of class \code{dafot}.
 #'
 #' An object of class \code{dafot} is a list containing following components:
-#' \itemize{
-#' \item \code{Stat} the maximum of test statistics
-#' \item \code{P} P value calculated from permutation test
-#' \item \code{Thre} the threshold for alpha level test
-#' \item \code{Active} the set of active edges
+#' \describe{
+#' \item{Stat}{the maximum of test statistics}
+#' \item{P}{P value calculated from permutation test}
+#' \item{Thre}{the threshold for alpha level test}
+#' \item{Active}{the set of active edges}
 #' }
 #'
 #' @export
@@ -189,6 +189,11 @@ SCalculation <- function(sP, sQ, tree, t) {
 #' @param n an integer. The number of reads drawn for each sample.
 #'
 #' @return \code{DataGenerating} returns a list of two matrix of the raw data generated from Dirichlet-multinomial distribution.
+#'
+#' \describe{
+#' \item{P}{The data generated from the first group}
+#' \item{Q}{The data generated from the second group}
+#' }
 #'
 #' @export
 #'
