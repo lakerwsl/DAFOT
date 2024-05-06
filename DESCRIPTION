@@ -1,14 +1,13 @@
 Package: DAFOT
 Title: Detector of Active Flow on a Tree
 Version: 0.0.2
-Date: 2020-04-26
+Date: 2024-05-06
 Authors@R: c(
-  person("Shulei", "Wang", role = c("aut", "cph")),
+  person("Shulei", "Wang", role = c("aut", "cph"), email = "shulei.wang364@gmail.com"),
   person("T. Tony", "Cai", role = "aut"),
   person("Hongzhe", "Li", role = "aut"),
   person("Bo", "Yuan", role = "aut"),
   person("Charlie", "Bushman", role = "cre", email = "ctbushman@gmail.com"))
-Maintainer: Shulei Wang <shulei.wang364@gmail.com>
 Description: Provides a new maximum type test for two-sample testing of microbial compositional data by leveraging the often sparse phylogenetic microbial composition difference between two populations. DAFOT is particularly powerful against sparse phylogenetic composition differences and enjoys certain optimality. Also provides two new methods for phylogenetic independence tests with rank correlation and confounding variables.
     Wang, S., Cai, T.T., Li, H. (2020) <http://www-stat.wharton.upenn.edu/~tcai/paper/Testing-Phylogenetic-Composition.pdf>.
 Imports:
