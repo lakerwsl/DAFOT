@@ -3,7 +3,7 @@ Title: Detector of Active Flow on a Tree
 Version: 0.0.2
 Date: 2020-04-26
 Authors@R: c(
-  person("Shulei", "Wang", role = "aut"),
+  person("Shulei", "Wang", role = c("aut", "cph")),
   person("T. Tony", "Cai", role = "aut"),
   person("Hongzhe", "Li", role = "aut"),
   person("Bo", "Yuan", role = "aut"),
@@ -22,7 +22,7 @@ Imports:
   methods
 biocViews: 
 Remotes: chaim-e/independence
-License: MIT+file LICENSE
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.1
