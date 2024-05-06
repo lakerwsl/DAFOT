@@ -1,6 +1,6 @@
 Package: DAFOT
 Title: Detector of Active Flow on a Tree
-Version: 0.0.2
+Version: 0.0.3
 Date: 2024-05-06
 Authors@R: c(
   person("Shulei", "Wang", role = c("aut", "cph"), email = "shulei.wang364@gmail.com"),
